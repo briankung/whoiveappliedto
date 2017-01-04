@@ -62,24 +62,49 @@
       el: '#hn',
       data: {
         jobPostIds: [],
-        jobPosts: []
+        jobPosts: [],
+        hiringMonthId: 13301832
       },
       components: {
         'job-post': JobPost
       },
+      methods: {
+        getCachedPost(postId) {
+          var cachedPost = localStorage.getItem(postId)
+
+          if (cachedPost === undefined || cachedPost ===null) {return cachedPost}
+
+          if (cachedPost.length > 0) {
+            return JSON.parse(cachedPost)
+          } else {
+            return null
+          }
+        },
+        setCachedPost(postId, obj) {
+          localStorage.setItem(postId, JSON.stringify(obj))
+        }
+
+      },
       mounted() {
         var rootApp = this;
-        axios.get(itemApiUrl(13301832))
+        axios.get(itemApiUrl(this.hiringMonthId))
           .then(function (response) {
             rootApp.jobPostIds = response.data.kids;
-            rootApp.jobPostIds.map((postId)=>{
-              axios.get(itemApiUrl(postId))
-                .then(function (response) {
-                  rootApp.jobPosts.push(response.data)
-                })
-                .catch(function (error) {
-                  console.log('Something went wrong fetching the job post.')
-                })
+            rootApp.jobPostIds.forEach((postId)=>{
+              var cachedPost = rootApp.getCachedPost(postId)
+              if (cachedPost) {
+                rootApp.jobPosts.push(cachedPost)
+              } else {
+                axios.get(itemApiUrl(postId))
+                  .then(function (response) {
+                    rootApp.jobPosts.push(response.data)
+                    rootApp.setCachedPost(postId, response.data)
+                  })
+                  .catch(function (error) {
+                    console.log('Something went wrong fetching the job post.')
+                  })
+              }
+
             });
           })
           .catch(function (error) {
