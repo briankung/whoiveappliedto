@@ -11,7 +11,7 @@
   <body>
     <p>This is a little toy app to keep track of which companies you've applied to on HackerNews's "Who Is Hiring?" posts.</p>
     <div id="hn">
-      <job-post v-for="id in jobPostIds" :comment-id="id"></job-post>
+      <job-post v-for="job in jobPosts" :by="job.by" :id="job.id" :time="job.time" :text="job.text"></job-post>
     </div>
   </body>
 
@@ -45,19 +45,7 @@
     }
 
     var JobPost = {
-      data: () => {
-        return {
-          by: '',
-          id: '',
-          time: '',
-          text: ''
-        }
-      },
-      props: {
-        commentId: {
-          required: true
-        }
-      },
+      props: ['by', 'id', 'time', 'text'],
       components: {
         'userlink': UserLink,
         'permalink': PermaLink
@@ -67,36 +55,32 @@
           <p><userlink :username="by"></userlink> - <permalink :id="id" :time="time"></permalink></p>
           <p v-html="text"></p>
         </div>
-      `,
-      mounted() {
-        var jobPost = this;
-        axios.get(itemApiUrl(this.commentId))
-          .then(function (response) {
-            jobPost.by = response.data.by
-            jobPost.id = response.data.id
-            jobPost.time = response.data.time
-            jobPost.text = response.data.text
-          })
-          .catch(function (error) {
-            console.log('Something went wrong fetching the job post.')
-          })
-      }
+      `
     };
 
     var whoIsHiring = new Vue({
       el: '#hn',
       data: {
         jobPostIds: [],
-        postUrl: itemApiUrl(13301832)
+        jobPosts: []
       },
       components: {
         'job-post': JobPost
       },
       mounted() {
         var rootApp = this;
-        axios.get(this.postUrl)
+        axios.get(itemApiUrl(13301832))
           .then(function (response) {
             rootApp.jobPostIds = response.data.kids;
+            rootApp.jobPostIds.map((postId)=>{
+              axios.get(itemApiUrl(postId))
+                .then(function (response) {
+                  rootApp.jobPosts.push(response.data)
+                })
+                .catch(function (error) {
+                  console.log('Something went wrong fetching the job post.')
+                })
+            });
           })
           .catch(function (error) {
             console.log('Something else went wrong fetching the who is hiring post.')
