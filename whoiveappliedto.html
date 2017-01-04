@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>HackerNews - Who I've Applied To</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/lodash@4.13.1/lodash.min.js"></script>
+  </head>
+
+  <body>
+    <p>This is a little toy app to keep track of which companies you've applied to on HackerNews's "Who Is Hiring?" posts.</p>
+    <div id="hn"></div>
+  </body>
+
+  <script>
+    Vue.component('listing', {
+      template: `
+      <div>
+        <p>{{ username | linkify }}<small>{{ timestamp }}</small></p>
+        <p>{{ postDescription }}</p>
+      </div>
+      `
+    });
+
+    var whoIsHiring = new Vue({
+      el: '#hn',
+
+    });
+  </script>
+</html>
