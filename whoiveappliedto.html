@@ -3,15 +3,18 @@
 <html>
   <head>
     <title>HackerNews - Who I've Applied To</title>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@2.1.8/dist/vue.js"></script>
     <script src="https://unpkg.com/axios@0.12.0/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/lodash@4.13.1/lodash.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.2.3/css/bulma.min.css">
   </head>
 
   <body>
-    <p>This is a little toy app to keep track of which companies you've applied to on HackerNews's "Who Is Hiring?" posts.</p>
-    <div id="hn">
-      <job-post v-for="job in jobPosts" :by="job.by" :id="job.id" :time="job.time" :text="job.text"></job-post>
+    <div class="box">This is a little toy app to keep track of which companies you've applied to on HackerNews's "Who Is Hiring?" posts.</div>
+    <div class="columns">
+      <div class="column is-2"></div>
+      <div id="hn" class="column is-8">
+        <job-post v-for="job in jobPosts" :by="job.by" :id="job.id" :time="job.time" :text="job.text"></job-post>
+      </div>
     </div>
   </body>
 
@@ -51,7 +54,7 @@
         'permalink': PermaLink
       },
       template: `
-        <div>
+        <div class="box">
           <p><userlink :username="by"></userlink> - <permalink :id="id" :time="time"></permalink></p>
           <p v-html="text"></p>
         </div>
