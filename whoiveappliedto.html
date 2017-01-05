@@ -63,7 +63,8 @@
       },
       data: () => {
         return {
-          showNotes: false
+          showNotes: false,
+          showCard: true
         }
       },
       template: `
@@ -71,7 +72,7 @@
           <header class="card-header">
             <p class="card-header-title" v-html="firstLine"></p>
           </header>
-          <div class="card-content">
+          <div class="card-content" v-show="showCard">
             <div class="content">
               <span v-html="text"></span>
               <p></p>
@@ -81,7 +82,9 @@
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" @click="toggleShowNotes">Notes</a>
-            <a class="card-footer-item">Hide</a>
+            <a class="card-footer-item" @click="toggleShowCard">
+              {{ this.showCard ? 'Hide' : 'Show' }}
+            </a>
             <label class="checkbox card-footer-item">
               <input type="checkbox">
               &nbsp;
@@ -93,6 +96,9 @@
       methods: {
         toggleShowNotes() {
           this.showNotes = !this.showNotes
+        },
+        toggleShowCard() {
+          this.showCard = !this.showCard
         }
       },
       computed: {
