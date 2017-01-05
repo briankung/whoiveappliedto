@@ -49,7 +49,7 @@
             </label>
           </div>
           <div class="column is-narrow is-pulled-right">
-            <label class="button is-danger" @change="getHnApi(13301832)">
+            <label class="button is-danger" @click="getHnApi()">
               Reset
             </label>
           </div>
@@ -206,7 +206,8 @@
       data: {
         jobPostIds: [],
         jobPosts: [],
-        filters: []
+        filters: [],
+        monthId: 13301832
       },
       components: {
         'job-post': JobPost
@@ -233,6 +234,8 @@
           });
         },
         getHnApi(monthId) {
+          monthId = monthId || this.monthId
+
           var rootApp = this
           rootApp.jobPosts = []
           rootApp.jobPostIds = []
@@ -266,12 +269,15 @@
         }
       },
       mounted() {
-        // var latestMonthId;
-        // axios.get('https://hacker-news.firebaseio.com/v0/user/whoishiring.json').then((response) => {
-        //   latestMonthId = Math.max.apply(Math, response.data.submitted)
-        //   this.getHnApi(latestMonthId)
-        // })
-        this.getHnApi(13301832)
+        var regex = /id=([0-9]+)/;
+        var matches = regex.exec(window.location.search);
+
+        if (matches) {
+          var monthId = matches[1]
+          this.getHnApi(monthId)
+        } else {
+          this.getHnApi()
+        }
       }
     });
   </script>
