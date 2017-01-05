@@ -88,7 +88,7 @@
         <div class="card">
           <header class="card-header">
             <a class="card-header-icon is-pulled-left" @click="toggleShowCard">
-              {{ this.showCard ? '[-]' : '[+]' }}
+              {{ openClose(this.showCard) }}
             </a>
             <p class="card-header-title" v-html="firstLine"></p>
           </header>
@@ -101,7 +101,7 @@
             <textarea type="text" class="textarea" v-show="showNotes" v-model="notes" @keyup="saveNotes"></textarea>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item" @click="toggleShowNotes">Notes</a>
+            <a class="card-footer-item" @click="toggleShowNotes">{{ openClose(showNotes) }} Notes</a>
             <label class="checkbox card-footer-item">
               <input type="checkbox">
               &nbsp;
@@ -119,13 +119,14 @@
         },
         toggleShowCard() {
           this.showCard = !this.showCard
-        }
-      },
-      computed: {
+        },
         firstLine() {
           if (this.text){
             return this.text.trim().split('<p>')[0]
           }
+        },
+        openClose(bool) {
+          return bool ? '[-]' : '[+]'
         }
       },
       mounted() {
