@@ -18,27 +18,28 @@
   <body>
     <div id="hn">
       <div class="box">
-        <div class="columns">
+        <div class="columns is-gapless">
           <div class="column is-10">
-            This is a little toy app to keep track of which companies you've applied to on HackerNews's "Who Is Hiring?" posts.
+            This is a little toy app to keep track of HackerNews "Who Is Hiring?" job applications.
           </div>
-          <div class="column is-2">
-            <label class="checkbox">
-              <input type="checkbox" value="saved" v-model="filters" @click="filterJobPosts">
-              Saved
+          <div class="column">
+            <label class="button" >
+              <input type="checkbox" value="saved" v-model="filters" @change="filterJobPosts">
+              &nbsp;
+              Filter Saved
             </label>
-            <label class="checkbox">
-              <input type="checkbox" value="applied" v-model="filters" @click="filterJobPosts">
-              Applied
+          </div>
+          <div class="column">
+            <label class="button" >
+              <input type="checkbox" value="applied" v-model="filters" @change="filterJobPosts">
+              &nbsp;
+              Filter Applied
             </label>
           </div>
         </div>
       </div>
-      <div class="columns">
-        <div class="column is-2"></div>
-        <div class="column is-8">
-          <job-post v-for="job in jobPosts" :by="job.by" :id="job.id" :time="job.time" :text="job.text"></job-post>
-        </div>
+      <div class="container">
+        <job-post v-for="job in jobPosts" :by="job.by" :id="job.id" :time="job.time" :text="job.text"></job-post>
       </div>
     </div>
   </body>
