@@ -3,7 +3,7 @@
 <html>
   <head>
     <title>Who I've Applied To (on HackerNews)</title>
-    <script src="https://unpkg.com/vue@2.1.8/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/vue@2.1.8/dist/vue.js"></script>
     <script src="https://unpkg.com/axios@0.12.0/dist/axios.min.js"></script>
     <script src="https://unpkg.com/moment@2.17.1/min/moment.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.2.3/css/bulma.min.css">
@@ -11,6 +11,18 @@
       .card {
         width: 100%;
         margin-bottom: 20px;
+      }
+      .permahide {
+        color: #7a7a7a; /* $grey in bulma */
+        width: auto;
+        padding-right: 10px;
+      }
+      .permahide:before {
+        content: '[x]';
+      }
+      .permahide:hover:before {
+        content: 'Remove "forever" [x]';
+        color: #ff470f; /* $orange in bulma */
       }
     </style>
   </head>
@@ -104,6 +116,7 @@
       data: () => {
         return {
           notes: '',
+          hidden: false,
           showInstance: true,
           showNotes: false,
           showCard: true,
@@ -112,12 +125,14 @@
         }
       },
       template: `
-        <div class="card" v-show="showInstance">
+        <div class="card" v-show="showInstance" v-if="!hidden">
           <header class="card-header">
             <a class="card-header-icon is-pulled-left" @click="toggleShowCard">
               {{ openClose(this.showCard) }}
             </a>
             <p class="card-header-title" v-html="firstLine"></p>
+            <a class="card-header-icon is-pulled-right permahide" @click="permahide">
+            </a>
           </header>
           <div class="card-content" v-show="showCard">
             <div class="content">
@@ -162,6 +177,10 @@
         },
         openClose(bool) {
           return bool ? '[-]' : '[+]'
+        },
+        permahide() {
+          this.hidden = true
+          this.saveData()
         }
       },
       computed: {
@@ -219,7 +238,10 @@
               rootApp.jobPostIds.forEach((postId)=>{
                 var cachedPost = getCachedItem(postId)
                 if (cachedPost) {
-                  rootApp.jobPosts.push(cachedPost)
+                  var cachedData = getCachedItem(postId+'-data') || {}
+                  if (!cachedData.hidden) {
+                    rootApp.jobPosts.push(cachedPost)
+                  }
                 } else {
                   axios.get(itemApiUrl(postId))
                     .then(function (response) {
