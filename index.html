@@ -177,7 +177,6 @@
       data: {
         jobPostIds: [],
         jobPosts: [],
-        hiringMonthId: 13301832,
         filters: []
       },
       components: {
@@ -203,33 +202,44 @@
                 }
               })
           });
+        },
+        getHnApi(monthId) {
+          var rootApp = this
+          rootApp.jobPosts = []
+          rootApp.jobPostIds = []
+
+          axios.get(itemApiUrl(monthId))
+            .then(function (response) {
+              rootApp.jobPostIds = response.data.kids;
+              rootApp.jobPostIds.forEach((postId)=>{
+                var cachedPost = getCachedItem(postId)
+                if (cachedPost) {
+                  rootApp.jobPosts.push(cachedPost)
+                } else {
+                  axios.get(itemApiUrl(postId))
+                    .then(function (response) {
+                      rootApp.jobPosts.push(response.data)
+                      setCachedItem(postId, response.data)
+                    })
+                    .catch(function (error) {
+                      console.log('Something went wrong fetching the job post.')
+                    })
+                }
+
+              });
+            })
+            .catch(function (error) {
+              console.log('Something else went wrong fetching the who is hiring post.')
+            })
         }
       },
       mounted() {
-        var rootApp = this;
-        axios.get(itemApiUrl(this.hiringMonthId))
-          .then(function (response) {
-            rootApp.jobPostIds = response.data.kids;
-            rootApp.jobPostIds.forEach((postId)=>{
-              var cachedPost = getCachedItem(postId)
-              if (cachedPost) {
-                rootApp.jobPosts.push(cachedPost)
-              } else {
-                axios.get(itemApiUrl(postId))
-                  .then(function (response) {
-                    rootApp.jobPosts.push(response.data)
-                    setCachedItem(postId, response.data)
-                  })
-                  .catch(function (error) {
-                    console.log('Something went wrong fetching the job post.')
-                  })
-              }
-
-            });
-          })
-          .catch(function (error) {
-            console.log('Something else went wrong fetching the who is hiring post.')
-          })
+        // var latestMonthId;
+        // axios.get('https://hacker-news.firebaseio.com/v0/user/whoishiring.json').then((response) => {
+        //   latestMonthId = Math.max.apply(Math, response.data.submitted)
+        //   this.getHnApi(latestMonthId)
+        // })
+        this.getHnApi(13301832)
       }
     });
   </script>
