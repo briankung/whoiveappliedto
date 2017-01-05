@@ -24,11 +24,11 @@
           </div>
           <div class="column is-2">
             <label class="checkbox">
-              <input type="checkbox" value="saved" v-model="filters">
+              <input type="checkbox" value="saved" v-model="filters" @click="filterJobPosts">
               Saved
             </label>
             <label class="checkbox">
-              <input type="checkbox" value="applied" v-model="filters">
+              <input type="checkbox" value="applied" v-model="filters" @click="filterJobPosts">
               Applied
             </label>
           </div>
@@ -98,6 +98,7 @@
       data: () => {
         return {
           notes: '',
+          showInstance: true,
           showNotes: false,
           showCard: true,
           saved: false,
@@ -105,7 +106,7 @@
         }
       },
       template: `
-        <div class="card">
+        <div class="card" v-show="showInstance">
           <header class="card-header">
             <a class="card-header-icon is-pulled-left" @click="toggleShowCard">
               {{ openClose(this.showCard) }}
@@ -175,10 +176,29 @@
       data: {
         jobPostIds: [],
         jobPosts: [],
-        hiringMonthId: 13301832
+        hiringMonthId: 13301832,
+        filters: []
       },
       components: {
         'job-post': JobPost
+      },
+      methods: {
+        filterJobPosts() {
+          setTimeout(this._filterJobPosts, 50)
+        },
+        _filterJobPosts() {
+          this.$children.forEach((child) => {
+            if (this.filters.length === 0) { return child.showInstance = true }
+
+            child.showInstance = this.filters
+              .map((filter) => {
+                return child[filter]
+              })
+              .reduce((filterStatusA, filterStatusB) => {
+                return filterStatusA || filterStatusB
+              })
+          });
+        }
       },
       mounted() {
         var rootApp = this;
