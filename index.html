@@ -31,21 +31,26 @@
     <div id="hn">
       <div class="box">
         <div class="columns is-gapless">
-          <div class="column is-10">
+          <div class="column">
             This is a little toy app to keep track of HackerNews "Who Is Hiring?" job applications.
           </div>
-          <div class="column">
+          <div class="column is-narrow is-pulled-right">
             <label class="button" >
               <input type="checkbox" value="saved" v-model="filters" @change="filterJobPosts">
               &nbsp;
               Filter Saved
             </label>
           </div>
-          <div class="column">
+          <div class="column is-narrow is-pulled-right">
             <label class="button" >
               <input type="checkbox" value="applied" v-model="filters" @change="filterJobPosts">
               &nbsp;
               Filter Applied
+            </label>
+          </div>
+          <div class="column is-narrow is-pulled-right">
+            <label class="button is-danger" @change="getHnApi(13301832)">
+              Reset
             </label>
           </div>
         </div>
