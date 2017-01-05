@@ -81,7 +81,9 @@
         return {
           notes: '',
           showNotes: false,
-          showCard: true
+          showCard: true,
+          saved: false,
+          applied: false
         }
       },
       template: `
@@ -104,16 +106,25 @@
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" @click="toggleShowNotes">{{ openClose(showNotes) }} Notes</a>
-            <label class="checkbox card-footer-item">
-              <input type="checkbox">
+            <label class="checkbox card-footer-item" @click="saveData">
+              <input type="checkbox" v-model="saved">
               &nbsp;
-              <a>Applied?</a>
+              <a>{{ this.saved ? 'Saved' : 'Save' }}</a>
+            </label>
+            <label class="checkbox card-footer-item" @click="saveData">
+              <input type="checkbox" v-model="applied">
+              &nbsp;
+              <a>{{ this.applied ? 'Applied!' : 'Applied?' }}</a>
             </label>
           </footer>
         </div>
       `,
       methods: {
         saveData() {
+          // Allows Vue to update the property before persisting the data
+          setTimeout(this._saveData, 50)
+        },
+        _saveData() {
           setCachedItem(this.id+'-data', this.$data)
         },
         toggleShowNotes() {
@@ -133,7 +144,7 @@
           if (this.text){
             return this.text.trim().split('<p>')[0]
           }
-        },
+        }
       },
       mounted() {
         var cachedData = getCachedItem(this.id+'-data')
