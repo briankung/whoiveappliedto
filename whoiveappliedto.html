@@ -120,14 +120,16 @@
         toggleShowCard() {
           this.showCard = !this.showCard
         },
+        openClose(bool) {
+          return bool ? '[-]' : '[+]'
+        }
+      },
+      computed: {
         firstLine() {
           if (this.text){
             return this.text.trim().split('<p>')[0]
           }
         },
-        openClose(bool) {
-          return bool ? '[-]' : '[+]'
-        }
       },
       mounted() {
         this.notes = localStorage.getItem(this.id+'-notes')
