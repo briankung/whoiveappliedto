@@ -195,7 +195,11 @@
                 return child[filter]
               })
               .reduce((filterStatusA, filterStatusB) => {
-                return filterStatusA || filterStatusB
+                if (this.filters.length > 1) {
+                  return filterStatusA && filterStatusB
+                } else {
+                  return filterStatusA || filterStatusB
+                }
               })
           });
         }
