@@ -38,6 +38,22 @@
       return 'https://hacker-news.firebaseio.com/v0/item/' + itemId + '.json'
     }
 
+    var getCachedItem = function(postId) {
+      var cachedPost = localStorage.getItem(postId)
+
+      if (cachedPost === undefined || cachedPost ===null) {return cachedPost}
+
+      if (cachedPost.length > 0) {
+        return JSON.parse(cachedPost)
+      } else {
+        return null
+      }
+    }
+
+    var setCachedItem = function(postId, obj) {
+      localStorage.setItem(postId, JSON.stringify(obj))
+    }
+
     var UserLink = {
       props: ['username'],
       template: '<a :href="userUrl">{{ username }}</a>',
@@ -63,6 +79,7 @@
       },
       data: () => {
         return {
+          notes: '',
           showNotes: false,
           showCard: true
         }
@@ -81,7 +98,7 @@
               <p></p>
               <p><small>> <permalink :id="id" :time="time"></permalink> - by <userlink :username="by"></userlink></small></p>
             </div>
-            <textarea type="text" class="textarea" v-show="showNotes"></textarea>
+            <textarea type="text" class="textarea" v-show="showNotes" v-model="notes" @keyup="saveNotes"></textarea>
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" @click="toggleShowNotes">Notes</a>
@@ -94,6 +111,9 @@
         </div>
       `,
       methods: {
+        saveNotes() {
+          localStorage.setItem(this.id+'-notes', this.notes)
+        },
         toggleShowNotes() {
           this.showNotes = !this.showNotes
         },
@@ -107,6 +127,9 @@
             return this.text.trim().split('<p>')[0]
           }
         }
+      },
+      mounted() {
+        this.notes = localStorage.getItem(this.id+'-notes')
       }
     };
 
@@ -120,37 +143,20 @@
       components: {
         'job-post': JobPost
       },
-      methods: {
-        getCachedPost(postId) {
-          var cachedPost = localStorage.getItem(postId)
-
-          if (cachedPost === undefined || cachedPost ===null) {return cachedPost}
-
-          if (cachedPost.length > 0) {
-            return JSON.parse(cachedPost)
-          } else {
-            return null
-          }
-        },
-        setCachedPost(postId, obj) {
-          localStorage.setItem(postId, JSON.stringify(obj))
-        }
-
-      },
       mounted() {
         var rootApp = this;
         axios.get(itemApiUrl(this.hiringMonthId))
           .then(function (response) {
             rootApp.jobPostIds = response.data.kids;
             rootApp.jobPostIds.forEach((postId)=>{
-              var cachedPost = rootApp.getCachedPost(postId)
+              var cachedPost = getCachedItem(postId)
               if (cachedPost) {
                 rootApp.jobPosts.push(cachedPost)
               } else {
                 axios.get(itemApiUrl(postId))
                   .then(function (response) {
                     rootApp.jobPosts.push(response.data)
-                    rootApp.setCachedPost(postId, response.data)
+                    setCachedItem(postId, response.data)
                   })
                   .catch(function (error) {
                     console.log('Something went wrong fetching the job post.')
