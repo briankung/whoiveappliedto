@@ -39,7 +39,12 @@
         </div>
       </div>
       <div class="container">
-        <job-post v-for="job in jobPosts" :by="job.by" :id="job.id" :time="job.time" :text="job.text"></job-post>
+        <job-post v-for="job in jobPosts"
+          :by="job.by"
+          :id="job.id"
+          :time="job.time"
+          :text="job.text"
+        ></job-post>
       </div>
     </div>
   </body>
