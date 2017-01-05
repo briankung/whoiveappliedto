@@ -16,11 +16,29 @@
   </head>
 
   <body>
-    <div class="box">This is a little toy app to keep track of which companies you've applied to on HackerNews's "Who Is Hiring?" posts.</div>
-    <div class="columns">
-      <div class="column is-2"></div>
-      <div id="hn" class="column is-8">
-        <job-post v-for="job in jobPosts" :by="job.by" :id="job.id" :time="job.time" :text="job.text"></job-post>
+    <div id="hn">
+      <div class="box">
+        <div class="columns">
+          <div class="column is-10">
+            This is a little toy app to keep track of which companies you've applied to on HackerNews's "Who Is Hiring?" posts.
+          </div>
+          <div class="column is-2">
+            <label class="checkbox">
+              <input type="checkbox" value="saved" v-model="filters">
+              Saved
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" value="applied" v-model="filters">
+              Applied
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column is-2"></div>
+        <div class="column is-8">
+          <job-post v-for="job in jobPosts" :by="job.by" :id="job.id" :time="job.time" :text="job.text"></job-post>
+        </div>
       </div>
     </div>
   </body>
