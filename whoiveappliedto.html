@@ -96,9 +96,11 @@
             <div class="content">
               <span v-html="text"></span>
               <p></p>
-              <p><small>> <permalink :id="id" :time="time"></permalink> - by <userlink :username="by"></userlink></small></p>
+              <p><small>> <permalink :id="id" :time="time"></permalink> by <userlink :username="by"></userlink></small></p>
             </div>
-            <textarea type="text" class="textarea" v-show="showNotes" v-model="notes" @keyup="saveData"></textarea>
+          </div>
+          <div class="card-content" v-show="showNotes">
+            <textarea type="text" class="textarea" v-model="notes" @keyup="saveData"></textarea>
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" @click="toggleShowNotes">{{ openClose(showNotes) }} Notes</a>
