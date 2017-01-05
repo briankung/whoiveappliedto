@@ -61,6 +61,11 @@
         'userlink': UserLink,
         'permalink': PermaLink
       },
+      data: () => {
+        return {
+          showNotes: false
+        }
+      },
       template: `
         <div class="card">
           <header class="card-header">
@@ -72,9 +77,10 @@
               <p></p>
               <p><small>> <permalink :id="id" :time="time"></permalink> - by <userlink :username="by"></userlink></small></p>
             </div>
+            <textarea type="text" class="textarea" v-show="showNotes"></textarea>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Notes</a>
+            <a class="card-footer-item" @click="toggleShowNotes">Notes</a>
             <a class="card-footer-item">Hide</a>
             <label class="checkbox card-footer-item">
               <input type="checkbox">
@@ -84,6 +90,11 @@
           </footer>
         </div>
       `,
+      methods: {
+        toggleShowNotes() {
+          this.showNotes = !this.showNotes
+        }
+      },
       computed: {
         firstLine() {
           if (this.text){
