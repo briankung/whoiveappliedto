@@ -5,7 +5,14 @@
     <title>HackerNews - Who I've Applied To</title>
     <script src="https://unpkg.com/vue@2.1.8/dist/vue.js"></script>
     <script src="https://unpkg.com/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.2.3/css/bulma.min.css">
+    <style>
+      .card {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    </style>
   </head>
 
   <body>
@@ -40,10 +47,11 @@
     }
 
     var PermaLink = {
-      props: ['itemId', 'time'],
-      template: '<a :href="itemUrl">{{ time }}</a>',
+      props: ['id', 'time'],
+      template: '<a :href="itemUrl">{{ timestamp }}</a>',
       computed: {
-        itemUrl() {return itemUrl(this.itemId)}
+        itemUrl() {return itemUrl(this.id)},
+        timestamp() {return moment.unix(this.time).format('MMMM Do YYYY, h:mm:ssa')}
       }
     }
 
@@ -54,11 +62,35 @@
         'permalink': PermaLink
       },
       template: `
-        <div class="box">
-          <p><userlink :username="by"></userlink> - <permalink :id="id" :time="time"></permalink></p>
-          <p v-html="text"></p>
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title" v-html="firstLine"></p>
+          </header>
+          <div class="card-content">
+            <div class="content">
+              <span v-html="text"></span>
+              <p></p>
+              <p><small>> <permalink :id="id" :time="time"></permalink> - by <userlink :username="by"></userlink></small></p>
+            </div>
+          </div>
+          <footer class="card-footer">
+            <a class="card-footer-item">Notes</a>
+            <a class="card-footer-item">Hide</a>
+            <label class="checkbox card-footer-item">
+              <input type="checkbox">
+              &nbsp;
+              <a>Applied?</a>
+            </label>
+          </footer>
         </div>
-      `
+      `,
+      computed: {
+        firstLine() {
+          if (this.text){
+            return this.text.trim().split('<p>')[0]
+          }
+        }
+      }
     };
 
     var whoIsHiring = new Vue({
