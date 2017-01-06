@@ -67,18 +67,6 @@
   </body>
 
   <script>
-    var userUrl = function(username) {
-      return 'https://news.ycombinator.com/user?id=' + username
-    }
-
-    var itemUrl = function(itemId) {
-      return 'https://news.ycombinator.com/item?id=' + itemId
-    }
-
-    var itemApiUrl = function(itemId) {
-      return 'https://hacker-news.firebaseio.com/v0/item/' + itemId + '.json'
-    }
-
     var getCachedItem = function(postId) {
       var cachedPost = localStorage.getItem(postId)
 
@@ -99,7 +87,7 @@
       props: ['username'],
       template: '<a :href="userUrl">{{ username }}</a>',
       computed: {
-        userUrl() {return userUrl(this.username)}
+        userUrl() {return 'https://news.ycombinator.com/user?id=' + this.username}
       }
     }
 
@@ -107,7 +95,7 @@
       props: ['id', 'time'],
       template: '<a :href="itemUrl">{{ timestamp }}</a>',
       computed: {
-        itemUrl() {return itemUrl(this.id)},
+        itemUrl() {return 'https://news.ycombinator.com/item?id=' + this.id},
         timestamp() {return moment.unix(this.time).format('MMMM Do YYYY, h:mm:ssa')}
       }
     }
@@ -213,6 +201,9 @@
         'job-post': JobPost
       },
       methods: {
+        itemApiUrl(itemId) {
+          return 'https://hacker-news.firebaseio.com/v0/item/' + itemId + '.json'
+        },
         getHnApi(monthId) {
           monthId = monthId || this.monthId
 
@@ -220,7 +211,7 @@
           rootApp.jobPosts = []
           rootApp.jobPostIds = []
 
-          axios.get(itemApiUrl(monthId))
+          axios.get(this.itemApiUrl(monthId))
             .then(function (response) {
               rootApp.jobPostIds = response.data.kids;
               rootApp.jobPostIds.forEach((postId)=>{
@@ -231,21 +222,21 @@
                     rootApp.jobPosts.push(cachedPost)
                   }
                 } else {
-                  axios.get(itemApiUrl(postId))
+                  axios.get(this.itemApiUrl(postId))
                     .then(function (response) {
                       if (response.data === null) {return}
                       rootApp.jobPosts.push(response.data)
                       setCachedItem(postId, response.data)
                     })
                     .catch(function (error) {
-                      console.log('Something went wrong fetching the job post.')
+                      console.log('Error fetching the job post.')
                     })
                 }
 
               });
             })
             .catch(function (error) {
-              console.log('Something else went wrong fetching the who is hiring post.')
+              console.log('Error fetching the who is hiring post.')
             })
         }
       },
