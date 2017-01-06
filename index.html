@@ -36,14 +36,14 @@
           </div>
           <div class="column is-narrow is-pulled-right">
             <label class="button" >
-              <input type="checkbox" value="saved" v-model="filters" @change="filterJobPosts">
+              <input type="checkbox" value="saved" v-model="filters">
               &nbsp;
               Filter Saved
             </label>
           </div>
           <div class="column is-narrow is-pulled-right">
             <label class="button" >
-              <input type="checkbox" value="applied" v-model="filters" @change="filterJobPosts">
+              <input type="checkbox" value="applied" v-model="filters">
               &nbsp;
               Filter Applied
             </label>
@@ -166,10 +166,6 @@
       `,
       methods: {
         saveData() {
-          // Allows Vue to update the property before persisting the data
-          setTimeout(this._saveData, 50)
-        },
-        _saveData() {
           setCachedItem(this.id+'-data', this.$data)
         },
         toggleShowNotes() {
@@ -195,8 +191,12 @@
           }
         }
       },
+      watch: {
+        $data: this.saveData
+      },
       mounted() {
         var cachedData = getCachedItem(this.id+'-data')
+
         for (var attrname in cachedData) { this[attrname] = cachedData[attrname]; }
       }
     };
@@ -213,26 +213,6 @@
         'job-post': JobPost
       },
       methods: {
-        filterJobPosts() {
-          setTimeout(this._filterJobPosts, 50)
-        },
-        _filterJobPosts() {
-          this.$children.forEach((child) => {
-            if (this.filters.length === 0) { return child.showInstance = true }
-
-            child.showInstance = this.filters
-              .map((filter) => {
-                return child[filter]
-              })
-              .reduce((filterStatusA, filterStatusB) => {
-                if (this.filters.length > 1) {
-                  return filterStatusA && filterStatusB
-                } else {
-                  return filterStatusA || filterStatusB
-                }
-              })
-          });
-        },
         getHnApi(monthId) {
           monthId = monthId || this.monthId
 
@@ -267,6 +247,25 @@
             .catch(function (error) {
               console.log('Something else went wrong fetching the who is hiring post.')
             })
+        }
+      },
+      watch: {
+        filters() {
+          this.$children.forEach((child) => {
+            if (this.filters.length === 0) { return child.showInstance = true }
+
+            child.showInstance = this.filters
+              .map((filter) => {
+                return child[filter]
+              })
+              .reduce((filterStatusA, filterStatusB) => {
+                if (this.filters.length > 1) {
+                  return filterStatusA && filterStatusB
+                } else {
+                  return filterStatusA || filterStatusB
+                }
+              })
+          });
         }
       },
       mounted() {
