@@ -7,3 +7,7 @@ From most to least ambitious:
 - Feeds from non-Hackernews websites
 - Date adjustment logic and UI
 - Prettier note system
+
+## To Do
+- Project organization
+- Backend (like all of it)
