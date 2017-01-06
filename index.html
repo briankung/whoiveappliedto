@@ -214,7 +214,7 @@
           axios.get(this.itemApiUrl(monthId))
             .then(function (response) {
               rootApp.jobPostIds = response.data.kids;
-              rootApp.jobPostIds.forEach((postId)=>{
+              rootApp.jobPostIds.forEach(function(postId) {
                 var cachedPost = getCachedItem(postId)
                 if (cachedPost) {
                   var cachedData = getCachedItem(postId+'-data') || {}
@@ -222,7 +222,7 @@
                     rootApp.jobPosts.push(cachedPost)
                   }
                 } else {
-                  axios.get(this.itemApiUrl(postId))
+                  axios.get(rootApp.itemApiUrl(postId))
                     .then(function (response) {
                       if (response.data === null) {return}
                       rootApp.jobPosts.push(response.data)
@@ -232,7 +232,6 @@
                       console.log('Error fetching the job post.')
                     })
                 }
-
               });
             })
             .catch(function (error) {
