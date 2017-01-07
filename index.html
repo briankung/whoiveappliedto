@@ -131,11 +131,11 @@
       template: `
         <div class="card" v-show="showInstance" v-if="!hidden">
           <header class="card-header">
-            <a class="card-header-icon is-pulled-left" @click="toggleShowCard">
+            <a class="card-header-icon is-pulled-left" @click="showCard = !showCard">
               {{ openClose(this.showCard) }}
             </a>
             <p class="card-header-title" v-html="firstLine"></p>
-            <a class="card-header-icon is-pulled-right permahide" @click="permahide">
+            <a class="card-header-icon is-pulled-right permahide" @click="hidden = true">
             </a>
           </header>
           <div class="card-content" v-show="showCard">
@@ -149,7 +149,7 @@
             <textarea type="text" class="textarea" v-model="notes"></textarea>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item" @click="toggleShowNotes">{{ openClose(showNotes) }} Notes</a>
+            <a class="card-footer-item" @click="showNotes = !showNotes">{{ openClose(showNotes) }} Notes</a>
             <label class="checkbox card-footer-item">
               <input type="checkbox" v-model="saved">
               &nbsp;
@@ -167,17 +167,8 @@
         saveData() {
           setCachedItem(this.id+'-data', this.$data)
         },
-        toggleShowNotes() {
-          this.showNotes = !this.showNotes
-        },
-        toggleShowCard() {
-          this.showCard = !this.showCard
-        },
         openClose(bool) {
           return bool ? '[-]' : '[+]'
-        },
-        permahide() {
-          this.hidden = true
         },
         search(query) {
           query = query.trim().toLowerCase()
