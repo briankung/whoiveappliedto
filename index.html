@@ -39,7 +39,7 @@
             </div>
             <div class="column is-narrow is-pulled-right">
               <label class="button">
-                <input type="text" class=".input" v-model="query" placeholder="Search">
+                <input type="text" class=".input" v-model="query" placeholder="Search" @keydown.esc="query = ''">
               </label>
               <label class="button">
                 <input type="checkbox" value="saved" v-model="filters">
