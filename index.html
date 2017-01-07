@@ -135,16 +135,16 @@
             </div>
           </div>
           <div class="card-content" v-show="showNotes">
-            <textarea type="text" class="textarea" v-model="notes" @keyup="saveData"></textarea>
+            <textarea type="text" class="textarea" v-model="notes"></textarea>
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" @click="toggleShowNotes">{{ openClose(showNotes) }} Notes</a>
-            <label class="checkbox card-footer-item" @click="saveData">
+            <label class="checkbox card-footer-item">
               <input type="checkbox" v-model="saved">
               &nbsp;
               <a>{{ this.saved ? 'Saved' : 'Save' }}</a>
             </label>
-            <label class="checkbox card-footer-item" @click="saveData">
+            <label class="checkbox card-footer-item">
               <input type="checkbox" v-model="applied">
               &nbsp;
               <a>{{ this.applied ? 'Applied!' : 'Applied?' }}</a>
@@ -158,18 +158,15 @@
         },
         toggleShowNotes() {
           this.showNotes = !this.showNotes
-          this.saveData()
         },
         toggleShowCard() {
           this.showCard = !this.showCard
-          this.saveData()
         },
         openClose(bool) {
           return bool ? '[-]' : '[+]'
         },
         permahide() {
           this.hidden = true
-          this.saveData()
         }
       },
       computed: {
@@ -180,7 +177,13 @@
         }
       },
       watch: {
-        $data: this.saveData
+        notes() {this.saveData()},
+        hidden() {this.saveData()},
+        showInstance() {this.saveData()},
+        showNotes() {this.saveData()},
+        showCard() {this.saveData()},
+        saved() {this.saveData()},
+        applied() {this.saveData()}
       },
       mounted() {
         var cachedData = getCachedItem(this.id+'-data')
