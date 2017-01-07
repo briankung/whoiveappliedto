@@ -120,9 +120,12 @@
       data: () => {
         return {
           notes: '',
+          // this should be showInstance
           hidden: false,
+          // showInstance is pretty misleading. Should rename it to showCard
           showInstance: true,
           showNotes: false,
+          // showCard should then be renamed to showCardContent
           showCard: true,
           saved: false,
           applied: false
