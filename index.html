@@ -6,6 +6,7 @@
     <script src="https://unpkg.com/vue@2.1.8/dist/vue.min.js"></script>
     <script src="https://unpkg.com/axios@0.12.0/dist/axios.min.js"></script>
     <script src="https://unpkg.com/moment@2.17.1/min/moment.min.js"></script>
+    <script src="https://unpkg.com/lodash@4.13.1/lodash.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.2.3/css/bulma.min.css">
     <style>
       .card {
@@ -35,14 +36,17 @@
             This is a little toy app to keep track of HackerNews "Who Is Hiring?" job applications.
           </div>
           <div class="column is-narrow is-pulled-right">
-            <label class="button" >
+            <label class="button">
+              <input type="text" class=".input" v-model="query" placeholder="Search">
+            </label>
+            <label class="button">
               <input type="checkbox" value="saved" v-model="filters">
               &nbsp;
               Filter Saved
             </label>
           </div>
           <div class="column is-narrow is-pulled-right">
-            <label class="button" >
+            <label class="button">
               <input type="checkbox" value="applied" v-model="filters">
               &nbsp;
               Filter Applied
@@ -167,6 +171,16 @@
         },
         permahide() {
           this.hidden = true
+        },
+        search(query) {
+          query = query.trim().toLowerCase()
+          text = this.text.trim().toLowerCase()
+          if (query[0] === '-' || query[0] === '!') {
+            query = query.slice(1, query.length)
+            return !(text.indexOf(query) >= 0)
+          } else {
+            return text.indexOf(query) >= 0
+          }
         }
       },
       computed: {
@@ -174,7 +188,6 @@
           return {
             notes: this.notes,
             hidden: this.hidden,
-            showInstance: this.showInstance,
             showNotes: this.showNotes,
             showCard: this.showCard,
             saved: this.saved,
@@ -203,7 +216,8 @@
         jobPostIds: [],
         jobPosts: [],
         filters: [],
-        monthId: 13301832
+        monthId: 13301832,
+        query: ''
       },
       components: {
         'job-post': JobPost
@@ -226,10 +240,11 @@
           } else {
             this.getHnApi()
           }
-        }
+        },
         getHnApi(monthId) {
           monthId = monthId || this.monthId
 
+          whoIsHiring = this
           whoIsHiring.jobPosts = []
           whoIsHiring.jobPostIds = []
 
@@ -246,7 +261,11 @@
                 } else {
                   axios.get(whoIsHiring.itemApiUrl(postId))
                     .then(function (response) {
-                      if (response.data === null) {return}
+                      if (!response.data || !response.data.text) {return}
+
+                      var emptyText = /\A\s*\z/.exec(response.data.text)
+                      if (emptyText) {return}
+
                       whoIsHiring.jobPosts.push(response.data)
                       setCachedItem(postId, response.data)
                     })
@@ -278,7 +297,30 @@
                 }
               })
           });
-        }
+        },
+        query: _.debounce(() => {
+          whoIsHiring.$children.forEach((child) => {
+            if (whoIsHiring.query === '') { return child.showInstance = true }
+
+            if (child && child.text) {
+              if (whoIsHiring.query.indexOf('&&') >= 0) {
+                child.showInstance = whoIsHiring.query.split('&&').map((andTerm) => {
+                  return child.search(andTerm.trim())
+                }).reduce((andBoolA, andBoolB) => {
+                  return andBoolA && andBoolB
+                })
+              } else if (whoIsHiring.query.indexOf('||') >= 0) {
+                child.showInstance = whoIsHiring.query.split('||').map((orTerm) => {
+                  return child.search(orTerm.trim())
+                }).reduce((orBoolA, orBoolB) => {
+                  return orBoolA || orBoolB
+                })
+              } else {
+                child.showInstance = child.search(whoIsHiring.query)
+              }
+            }
+          });
+        }, 200)
       },
       mounted() {
         this.getParamMonth()
