@@ -49,7 +49,7 @@
             </label>
           </div>
           <div class="column is-narrow is-pulled-right">
-            <label class="button is-danger" @click="getHnApi()">
+            <label class="button is-danger" @click="clearAndGetHnApi()">
               Reset
             </label>
           </div>
@@ -212,28 +212,42 @@
         itemApiUrl(itemId) {
           return 'https://hacker-news.firebaseio.com/v0/item/' + itemId + '.json'
         },
+        clearAndGetHnApi() {
+          localStorage.clear()
+          this.getParamMonth()
+        },
+        getParamMonth() {
+          var regex = /id=([0-9]+)/;
+          var matches = regex.exec(window.location.search);
+
+          if (matches) {
+            var monthId = matches[1]
+            this.getHnApi(monthId)
+          } else {
+            this.getHnApi()
+          }
+        }
         getHnApi(monthId) {
           monthId = monthId || this.monthId
 
-          var rootApp = this
-          rootApp.jobPosts = []
-          rootApp.jobPostIds = []
+          whoIsHiring.jobPosts = []
+          whoIsHiring.jobPostIds = []
 
           axios.get(this.itemApiUrl(monthId))
             .then(function (response) {
-              rootApp.jobPostIds = response.data.kids;
-              rootApp.jobPostIds.forEach(function(postId) {
+              whoIsHiring.jobPostIds = response.data.kids;
+              whoIsHiring.jobPostIds.forEach(function(postId) {
                 var cachedPost = getCachedItem(postId)
                 if (cachedPost) {
                   var cachedData = getCachedItem(postId+'-data') || {}
                   if (!cachedData.hidden) {
-                    rootApp.jobPosts.push(cachedPost)
+                    whoIsHiring.jobPosts.push(cachedPost)
                   }
                 } else {
-                  axios.get(rootApp.itemApiUrl(postId))
+                  axios.get(whoIsHiring.itemApiUrl(postId))
                     .then(function (response) {
                       if (response.data === null) {return}
-                      rootApp.jobPosts.push(response.data)
+                      whoIsHiring.jobPosts.push(response.data)
                       setCachedItem(postId, response.data)
                     })
                     .catch(function (error) {
@@ -267,15 +281,7 @@
         }
       },
       mounted() {
-        var regex = /id=([0-9]+)/;
-        var matches = regex.exec(window.location.search);
-
-        if (matches) {
-          var monthId = matches[1]
-          this.getHnApi(monthId)
-        } else {
-          this.getHnApi()
-        }
+        this.getParamMonth()
       }
     });
   </script>
