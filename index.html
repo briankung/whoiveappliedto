@@ -170,6 +170,17 @@
         }
       },
       computed: {
+        savedData() {
+          return {
+            notes: this.notes,
+            hidden: this.hidden,
+            showInstance: this.showInstance,
+            showNotes: this.showNotes,
+            showCard: this.showCard,
+            saved: this.saved,
+            applied: this.applied
+          }
+        },
         firstLine() {
           if (this.text){
             return this.text.trim().split('<p>')[0]
@@ -177,13 +188,7 @@
         }
       },
       watch: {
-        notes() {this.saveData()},
-        hidden() {this.saveData()},
-        showInstance() {this.saveData()},
-        showNotes() {this.saveData()},
-        showCard() {this.saveData()},
-        saved() {this.saveData()},
-        applied() {this.saveData()}
+        savedData() {this.saveData()}
       },
       mounted() {
         var cachedData = getCachedItem(this.id+'-data')
