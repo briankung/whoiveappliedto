@@ -121,28 +121,25 @@
       data: () => {
         return {
           notes: '',
-          // this should be showInstance
-          hidden: false,
-          // showInstance is pretty misleading. Should rename it to showCard
-          showInstance: true,
-          showNotes: false,
-          // showCard should then be renamed to showCardContent
+          hideInstance: false,
           showCard: true,
+          showNotes: false,
+          showCardContent: true,
           saved: false,
           applied: false
         }
       },
       template: `
-        <div class="card" v-show="showInstance" v-if="!hidden">
+        <div class="card" v-show="showCard" v-if="!hideInstance">
           <header class="card-header">
-            <a class="card-header-icon is-pulled-left" @click="showCard = !showCard">
-              {{ openClose(this.showCard) }}
+            <a class="card-header-icon is-pulled-left" @click="showCardContent = !showCardContent">
+              {{ openClose(this.showCardContent) }}
             </a>
             <p class="card-header-title" v-html="firstLine"></p>
-            <a class="card-header-icon is-pulled-right permahide" @click="hidden = true">
+            <a class="card-header-icon is-pulled-right permahide" @click="hideInstance = true">
             </a>
           </header>
-          <div class="card-content" v-show="showCard">
+          <div class="card-content" v-show="showCardContent">
             <div class="content">
               <span v-html="text"></span>
               <p></p>
@@ -189,9 +186,9 @@
         savedData() {
           return {
             notes: this.notes,
-            hidden: this.hidden,
+            hideInstance: this.hideInstance,
             showNotes: this.showNotes,
-            showCard: this.showCard,
+            showCardContent: this.showCardContent,
             saved: this.saved,
             applied: this.applied
           }
@@ -258,7 +255,7 @@
                 var cachedPost = getCachedItem(postId)
                 if (cachedPost) {
                   var cachedData = getCachedItem(postId+'-data') || {}
-                  if (!cachedData.hidden) {
+                  if (!cachedData.hideInstance) {
                     whoIsHiring.jobPosts.push(cachedPost)
                   }
                 } else {
@@ -286,8 +283,8 @@
           this.showAll = !this.showAll
 
           this.$children.forEach((child) => {
-            if (child.showInstance) {
-              child.showCard = this.showAll
+            if (child.showCard) {
+              child.showCardContent = this.showAll
             }
           })
         }
@@ -295,9 +292,9 @@
       watch: {
         filters() {
           this.$children.forEach((child) => {
-            if (this.filters.length === 0) { return child.showInstance = true }
+            if (this.filters.length === 0) { return child.showCard = true }
 
-            child.showInstance = this.filters
+            child.showCard = this.filters
               .map((filter) => {
                 return child[filter]
               })
@@ -312,23 +309,23 @@
         },
         query: _.debounce(() => {
           whoIsHiring.$children.forEach((child) => {
-            if (whoIsHiring.query === '') { return child.showInstance = true }
+            if (whoIsHiring.query === '') { return child.showCard = true }
 
             if (child && child.text) {
               if (whoIsHiring.query.indexOf('&&') >= 0) {
-                child.showInstance = whoIsHiring.query.split('&&').map((andTerm) => {
+                child.showCard = whoIsHiring.query.split('&&').map((andTerm) => {
                   return child.search(andTerm.trim())
                 }).reduce((andBoolA, andBoolB) => {
                   return andBoolA && andBoolB
                 })
               } else if (whoIsHiring.query.indexOf('||') >= 0) {
-                child.showInstance = whoIsHiring.query.split('||').map((orTerm) => {
+                child.showCard = whoIsHiring.query.split('||').map((orTerm) => {
                   return child.search(orTerm.trim())
                 }).reduce((orBoolA, orBoolB) => {
                   return orBoolA || orBoolB
                 })
               } else {
-                child.showInstance = child.search(whoIsHiring.query)
+                child.showCard = child.search(whoIsHiring.query)
               }
             }
           });
