@@ -55,12 +55,17 @@
               </label>
             </div>
             <div class="column is-narrow is-pulled-right">
-              <label class="button is-primary" @click="toggleAllVisibleCollapse">
-                Collapse All
+              <label class="button is-primary" @click="toggleAllCards">
+                Toggle Cards
               </label>
             </div>
             <div class="column is-narrow is-pulled-right">
-              <label class="button is-danger" @click="clearAndGetHnApi()">
+              <label class="button is-primary" @click="toggleAllNotes">
+                Toggle Notes
+              </label>
+            </div>
+            <div class="column is-narrow is-pulled-right">
+              <label class="button is-danger" @click="clearAndGetHnApi">
                 Reset
               </label>
             </div>
@@ -213,6 +218,7 @@
       el: '#hn',
       data: {
         showAll: true,
+        showAllNotes: false,
         jobPostIds: [],
         jobPosts: [],
         filters: [],
@@ -279,12 +285,21 @@
               console.log('Error fetching the who is hiring post.')
             })
         },
-        toggleAllVisibleCollapse() {
+        toggleAllCards() {
           this.showAll = !this.showAll
 
           this.$children.forEach((child) => {
             if (child.showCard) {
               child.showCardContent = this.showAll
+            }
+          })
+        },
+        toggleAllNotes() {
+          this.showAllNotes = !this.showAllNotes
+
+          this.$children.forEach((child) => {
+            if (child.showCard) {
+              child.showNotes = this.showAllNotes
             }
           })
         }
