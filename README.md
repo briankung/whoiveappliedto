@@ -9,5 +9,9 @@ From most to least ambitious:
 - Prettier note system
 
 ## To Do
-- Project organization
-- Backend (like all of it)
+- advanced/refactored search
+- fix janky navbar
+- paging / infinite scroll
+- use webpack for assets
+- undo
+- filter + search at the same time
