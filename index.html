@@ -135,6 +135,7 @@
       },
       data: () => {
         return {
+          selected: false,
           notes: '',
           hideInstance: false,
           showCard: true,
@@ -145,12 +146,12 @@
         }
       },
       template: `
-        <div class="card" v-show="showCard" v-if="!hideInstance">
-          <header class="card-header" @click="showCardContent = !showCardContent">
-            <a class="card-header-icon is-pulled-left">
-              {{ openClose(this.showCardContent) }}
+        <div :class="{ 'is-primary': selected, message: selected, card: !selected }" v-show="showCard" v-if="!hideInstance">
+          <header class="card-header">
+            <a class="card-header-icon is-pulled-left" @click="selected = !selected">
+              <input type="checkbox" v-model="selected">
             </a>
-            <p class="card-header-title" v-html="firstLine"></p>
+            <p class="card-header-title" v-html="firstLine" @click.self="showCardContent = !showCardContent"></p>
             <a class="card-header-icon is-pulled-right permahide" @click="hideInstance = true">
             </a>
           </header>
@@ -162,7 +163,7 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item" @click="showNotes = !showNotes">{{ openClose(showNotes) }} Notes</a>
+            <a class="card-footer-item" @click="showNotes = !showNotes">{{ showNotes ? '[-]' : '[+]' }} Notes</a>
             <label class="checkbox card-footer-item">
               <input type="checkbox" v-model="saved">
               &nbsp;
@@ -182,9 +183,6 @@
       methods: {
         saveData() {
           setCachedItem(this.id+'-data', this.savedData)
-        },
-        openClose(bool) {
-          return bool ? '[-]' : '[+]'
         },
         search(query) {
           query = query.trim().toLowerCase()
