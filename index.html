@@ -146,8 +146,8 @@
       },
       template: `
         <div class="card" v-show="showCard" v-if="!hideInstance">
-          <header class="card-header">
-            <a class="card-header-icon is-pulled-left" @click="showCardContent = !showCardContent">
+          <header class="card-header" @click="showCardContent = !showCardContent">
+            <a class="card-header-icon is-pulled-left">
               {{ openClose(this.showCardContent) }}
             </a>
             <p class="card-header-title" v-html="firstLine"></p>
