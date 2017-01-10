@@ -178,7 +178,7 @@
       `,
       methods: {
         saveData() {
-          setCachedItem(this.id+'-data', this.$data)
+          setCachedItem(this.id+'-data', this.savedData)
         },
         openClose(bool) {
           return bool ? '[-]' : '[+]'
@@ -197,6 +197,7 @@
       computed: {
         savedData() {
           return {
+            id: this.id,
             notes: this.notes,
             hideInstance: this.hideInstance,
             showNotes: this.showNotes,
